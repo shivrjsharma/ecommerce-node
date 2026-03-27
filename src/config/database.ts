@@ -8,7 +8,7 @@ import { OrderItem } from "../entity/OrderItem";
 
 export const AppDataSource = new DataSource({
   type: "better-sqlite3",
-  database: "database.sqlite",
+  database: process.env.DB_DATABASE || "database.sqlite",
   synchronize: false,
   logging: false,
   entities: [User, Product, CartItem, Order, OrderItem],

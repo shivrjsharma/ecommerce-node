@@ -1,5 +1,5 @@
 import { ILike, Repository } from "typeorm";
-import { AppDataSource } from "../config/database";
+import { getRepository } from "../db";
 import { Product } from "../entity/Product";
 import { IProductService } from "../interfaces/IProductService";
 import { AppError } from "../utils/AppError";
@@ -9,7 +9,7 @@ import cache from "../utils/cache";
 
 export class ProductService implements IProductService {
   private get repo(): Repository<Product> {
-    return AppDataSource.getRepository(Product);
+    return getRepository(Product);
   }
 
   private invalidateProduct(id: number) {

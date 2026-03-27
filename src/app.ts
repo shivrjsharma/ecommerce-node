@@ -15,6 +15,8 @@ import userRouter from "./routes/userRoutes";
 import productRouter from "./routes/productRoutes";
 import cartRouter from "./routes/cartRoutes";
 import orderRouter from "./routes/orderRoutes";
+import { orderEmitter, ORDER_EVENTS, type OrderCreatedPayload } from "./events/orderEvents";
+import { sendOrderConfirmationMail } from "./utils/mailer";
 
 const app = express();
 const loggerMiddleware = new LoggerMiddleware();
@@ -54,7 +56,15 @@ process.on("unhandledRejection", (reason: unknown) => {
 });
 
 async function start(): Promise<void> {
+  orderEmitter.on(ORDER_EVENTS.CREATED, (payload: OrderCreatedPayload) => {
+    logger.info(`[Event:order.created] orderId=${payload.id} userId=${payload.userId} total=${payload.total} status=${payload.status}`);
+    sendOrderConfirmationMail(payload.userEmail, payload.userName, payload.id, payload.total)
+      .then(() => logger.info(`[Mailer] confirmation sent to ${payload.userEmail} for orderId=${payload.id}`))
+      .catch((err: Error) => logger.error(`[Mailer] failed to send to ${payload.userEmail} → ${err.message}`, { err }));
+  });
+
   await AppDataSource.initialize();
+  app.locals.db = AppDataSource;
   logger.info("Database connected (SQLite)");
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

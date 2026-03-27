@@ -1,10 +1,10 @@
-import { AppDataSource } from "../config/database";
+import { getRepository } from "../db";
 import { User } from "../entity/User";
 import { ITokenStore } from "../interfaces/ITokenStore";
 
 export class DbTokenStore implements ITokenStore {
   private get repo() {
-    return AppDataSource.getRepository(User);
+    return getRepository(User);
   }
 
   async set(userId: number, token: string, _ttlSeconds: number): Promise<void> {

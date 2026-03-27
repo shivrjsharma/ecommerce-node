@@ -1,19 +1,21 @@
 import { Repository } from "typeorm";
-import { AppDataSource } from "../config/database";
+import { getRepository } from "../db";
 import { Order, OrderStatus } from "../entity/Order";
 import { OrderItem } from "../entity/OrderItem";
+import { User } from "../entity/User";
 import { IOrderService } from "../interfaces/IOrderService";
 import { ICartService } from "../interfaces/ICartService";
 import { AppError } from "../utils/AppError";
 import { MSG } from "../constants/messages";
 import logger from "../utils/logger";
+import { orderEmitter, ORDER_EVENTS } from "../events/orderEvents";
 
 export class OrderService implements IOrderService {
   // DIP: depends on ICartService abstraction, not CartService directly
   constructor(private readonly cartService: ICartService) {}
 
   private get repo(): Repository<Order> {
-    return AppDataSource.getRepository(Order);
+    return getRepository(Order);
   }
 
   async create(userId: number) {
@@ -34,6 +36,8 @@ export class OrderService implements IOrderService {
       const order = this.repo.create({ user: { id: userId } as Pick<Order["user"], "id">, items, total });
       const saved = await this.repo.save(order);
       await this.cartService.clear(userId);
+      const user = await getRepository(User).findOneBy({ id: userId });
+      orderEmitter.emit(ORDER_EVENTS.CREATED, { id: saved.id, total: saved.total, status: saved.status, userId, userEmail: user?.email ?? "", userName: user?.name ?? "" });
       logger.info(`[OrderService] order created id=${saved.id} userId=${userId} total=${total}`);
       return saved;
     } catch (err) {

@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { AppDataSource } from "../config/database";
+import { getRepository } from "../db";
 import { CartItem } from "../entity/CartItem";
 import { ICartService } from "../interfaces/ICartService";
 import { IProductService } from "../interfaces/IProductService";
@@ -12,7 +12,7 @@ export class CartService implements ICartService {
   constructor(private readonly productService: IProductService) {}
 
   private get repo(): Repository<CartItem> {
-    return AppDataSource.getRepository(CartItem);
+    return getRepository(CartItem);
   }
 
   async add(userId: number, productId: number, quantity: number) {

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { Repository } from "typeorm";
-import { AppDataSource } from "../config/database";
+import { getRepository } from "../db";
 import { User, UserRole } from "../entity/User";
 import { IUserService } from "../interfaces/IUserService";
 import { AppError } from "../utils/AppError";
@@ -10,7 +10,7 @@ import cache from "../utils/cache";
 
 export class UserService implements IUserService {
   private get repo(): Repository<User> {
-    return AppDataSource.getRepository(User);
+    return getRepository(User);
   }
 
   async register(name: string, email: string, password: string, role = "user") {

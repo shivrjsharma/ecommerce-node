@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Repository } from "typeorm";
-import { AppDataSource } from "../config/database";
+import { getRepository } from "../db";
 import { User } from "../entity/User";
-import { IAuthService, TokenPair } from "../interfaces/IAuthService";
+import { IAuthService } from "../interfaces/IAuthService";
 import { ITokenStore } from "../interfaces/ITokenStore";
 import { AppError } from "../utils/AppError";
 import { MSG } from "../constants/messages";
@@ -17,7 +17,7 @@ export class AuthService implements IAuthService {
   constructor(private readonly tokenStore: ITokenStore) {}
 
   private get repo(): Repository<User> {
-    return AppDataSource.getRepository(User); 
+    return getRepository(User); 
   }
 
   private signAccessToken(userId: number): string {

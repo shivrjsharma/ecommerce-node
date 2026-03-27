@@ -3,13 +3,15 @@ import { IOrderService } from "../interfaces/IOrderService";
 import { AuthRequest } from "../middleware/auth";
 import { ApiResponse } from "../utils/ApiResponse";
 import { MSG } from "../constants/messages";
-
+import EventEmitter from 'node:events'
 export class OrderController {
   constructor(private readonly orderService: IOrderService) {}
+  event = new EventEmitter();
 
   create = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       ApiResponse.success(res, await this.orderService.create(req.userId!), MSG.ORDER.CREATED, 201);
+      this.event.emit("orderCreated", req.body);
     } catch (err) {
       next(err);
     }
