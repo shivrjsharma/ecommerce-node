@@ -12,5 +12,5 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: false,
   entities: [User, Product, CartItem, Order, OrderItem],
-  migrations: ["src/migrations/*.ts"],
+  migrations: ["dist/migrations/*.js"],
 });

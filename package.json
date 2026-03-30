@@ -6,10 +6,17 @@
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/app.js",
+    "pm2:dev": "pm2 start ecosystem.config.cjs --only ecommerce-api-dev",
+    "pm2:start": "npm run build && pm2 start ecosystem.config.cjs --only ecommerce-api",
+    "pm2:stop": "pm2 stop ecosystem.config.cjs",
+    "pm2:restart": "pm2 restart ecosystem.config.cjs",
+    "pm2:reload": "pm2 reload ecosystem.config.cjs",
+    "pm2:delete": "pm2 delete ecosystem.config.cjs",
+    "pm2:logs": "pm2 logs",
+    "pm2:monit": "pm2 monit",
+    "pm2:status": "pm2 status",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d src/config/database.ts",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d src/config/database.ts",
-    "migration:generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -d src/config/database.ts",
-    "migration:create": "ts-node ./node_modules/typeorm/cli.js migration:create -d src/config/database.ts",
     "migration:show": "ts-node ./node_modules/typeorm/cli.js migration:show -d src/config/database.ts"
   },
   "keywords": [],
@@ -52,6 +59,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.14",
     "openapi-types": "^12.1.3",
+    "pm2": "^6.0.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
