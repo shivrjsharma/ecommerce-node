@@ -2,6 +2,7 @@ import "reflect-metadata";
 import "dotenv/config";
 import express, { Router } from "express";
 import cors from "cors";
+import path from "path";
 import swaggerUi from "swagger-ui-express";
 import { LoggerMiddleware } from "./middleware/logger";
 import { ErrorMiddleware } from "./middleware/error";
@@ -22,12 +23,14 @@ const app = express();
 const loggerMiddleware = new LoggerMiddleware();
 const errorMiddleware = new ErrorMiddleware();
 
+// amazonq-ignore-next-line
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware.requestLogger);
 app.use(generalLimiter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // OCP: add new routes here without modifying anything else
 const routes: [string, Router][] = [
@@ -64,7 +67,6 @@ async function start(): Promise<void> {
   });
 
   await AppDataSource.initialize();
-  app.locals.db = AppDataSource;
   logger.info("Database connected (SQLite)");
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

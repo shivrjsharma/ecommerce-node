@@ -39,4 +39,22 @@ export class UserController {
       next(err);
     }
   };
+
+  uploadAvatar = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.file) throw new Error("No file uploaded");
+      const filePath = `/uploads/avatars/${req.file.filename}`;
+      ApiResponse.success(res, await this.userService.uploadAvatar(req.userId!, filePath), MSG.USER.PROFILE_UPDATED);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  removeAvatar = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      ApiResponse.success(res, await this.userService.uploadAvatar(req.userId!, null as unknown as string), MSG.USER.PROFILE_UPDATED);
+    } catch (err) {
+      next(err);
+    }
+  };
 }

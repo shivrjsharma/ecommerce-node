@@ -11,7 +11,7 @@ export class AuthController {
     try {
       ApiResponse.success(res, await this.authService.login(req.body.email, req.body.password), MSG.AUTH.LOGIN_SUCCESS);
     } catch (err) {
-      next(err);
+       next(err);
     }
   };
 
@@ -19,7 +19,7 @@ export class AuthController {
     try {
       ApiResponse.success(res, await this.authService.refresh(req.body.refreshToken), MSG.AUTH.TOKEN_REFRESHED);
     } catch (err) {
-      next(err);
+       next(err);
     }
   };
 
@@ -28,7 +28,7 @@ export class AuthController {
       await this.authService.logout(req.userId!);
       ApiResponse.success(res, null, MSG.AUTH.LOGOUT_SUCCESS);
     } catch (err) {
-      next(err);
+       next(err);
     }
   };
 }

@@ -42,6 +42,7 @@ const spec: OpenAPIV3.Document = {
           name: { type: "string", example: "John Doe" },
           email: { type: "string", example: "john@example.com" },
           role: { type: "string", enum: ["user", "admin"], example: "user" },
+          avatar: { type: "string", nullable: true, example: "/uploads/avatars/1234567890.jpg" },
           createdAt: { type: "string", format: "date-time" },
         },
       },
@@ -257,6 +258,32 @@ const spec: OpenAPIV3.Document = {
         },
       },
     },
+    "/users/avatar": {
+      post: {
+        tags: ["Users"],
+        summary: "Upload profile picture",
+        security: bearerAuth,
+        requestBody: {
+          required: true,
+          content: {
+            "multipart/form-data": {
+              schema: {
+                type: "object",
+                required: ["avatar"],
+                properties: {
+                  avatar: { type: "string", format: "binary" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Avatar uploaded", content: jsonContent({ type: "object", properties: { message: { type: "string" }, data: ref("UserProfile") } }) },
+          400: errorResponse("No file uploaded or invalid file type"),
+          401: errorResponse("Unauthorized"),
+        },
+      },
+    },
     "/users/change-password": {
       put: {
         tags: ["Users"],
@@ -282,6 +309,26 @@ const spec: OpenAPIV3.Document = {
     },
 
     // ── Products ─────────────────────────────────────────────────────────────
+    "/api/v1/products/export/{format}": {
+      get: {
+        tags: ["Products"],
+        summary: "Export product list as CSV, XLSX or PDF",
+        security: noAuth,
+        parameters: [
+          {
+            in: "path",
+            name: "format",
+            required: true,
+            schema: { type: "string", enum: ["csv", "xlsx", "pdf"] },
+            example: "csv",
+          },
+        ],
+        responses: {
+          200: { description: "File download" },
+          400: errorResponse("Invalid format"),
+        },
+      },
+    },
     "/products": {
       get: {
         tags: ["Products"],

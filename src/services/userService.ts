@@ -58,6 +58,18 @@ export class UserService implements IUserService {
     }
   }
 
+  async uploadAvatar(id: number, filePath: string | null) {
+    logger.debug(`[UserService] uploadAvatar → id=${sanitizeLog(id)}`);
+    try {
+      await this.repo.update(id, { avatar: filePath });
+      cache.del(`user:${id}`);
+      return this.getProfile(id);
+    } catch (err) {
+      logger.error(`[UserService] uploadAvatar failed → id=${sanitizeLog(id)}`, { err });
+      throw err instanceof AppError ? err : new AppError(MSG.USER.UPDATE_FAILED, 500);
+    }
+  }
+
   async changePassword(id: number, oldPassword: string, newPassword: string) {
     logger.debug(`[UserService] changePassword → id=${sanitizeLog(id)}`);
     try {

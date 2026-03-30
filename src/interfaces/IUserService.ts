@@ -6,4 +6,5 @@ export interface IUserService {
   getProfile(id: number): Promise<UserProfile>;
   update(id: number, data: Partial<Pick<User, "name" | "email">>): Promise<UserProfile>;
   changePassword(id: number, oldPassword: string, newPassword: string): Promise<void>;
+  uploadAvatar(id: number, filePath: string): Promise<UserProfile>;
 }
