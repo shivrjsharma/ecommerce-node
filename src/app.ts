@@ -29,7 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware.requestLogger);
 // app.use(generalLimiter);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { customCssUrl: undefined }));
+app.use("/api-docs", express.static(path.join(process.cwd(), "node_modules", "swagger-ui-dist")));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // OCP: add new routes here without modifying anything else

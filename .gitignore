@@ -5,3 +5,5 @@ logs/
 .env
 .amazonq/
 .env.*
+.vercel
+.env*.local
