@@ -28,10 +28,9 @@ const errorMiddleware = new ErrorMiddleware();
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(loggerMiddleware.requestLogger);
-// app.use(generalLimiter);
+app.use(loggerMiddleware.requestLogger)
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use("/api-docs", express.static(swaggerUiDist.getAbsoluteFSPath()));
+
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // OCP: add new routes here without modifying anything else
