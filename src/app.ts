@@ -4,6 +4,7 @@ import express, { Router } from "express";
 import cors from "cors";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
+import swaggerUiDist from "swagger-ui-dist";
 import { LoggerMiddleware } from "./middleware/logger";
 import { ErrorMiddleware } from "./middleware/error";
 import { AppDataSource } from "./config/database";
@@ -29,8 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware.requestLogger);
 // app.use(generalLimiter);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { customCssUrl: undefined }));
-app.use("/api-docs", express.static(path.join(process.cwd(), "node_modules", "swagger-ui-dist")));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", express.static(swaggerUiDist.getAbsoluteFSPath()));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // OCP: add new routes here without modifying anything else
